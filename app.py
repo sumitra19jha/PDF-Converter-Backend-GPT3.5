@@ -13,10 +13,8 @@ CORS(app)
 nltk.download('punkt')
 
 def count_tokens(prompt):
-    # Convert the prompt to bytes
     prompt_bytes = bytes(prompt, 'utf-8')
 
-    # Use the tokenize module to count the number of tokens
     token_count = 0
     for token in tokenize.tokenize(BytesIO(prompt_bytes).readline):
         if token.type != tokenize.ENDMARKER:
@@ -25,10 +23,8 @@ def count_tokens(prompt):
     return token_count
 
 def split_prompt(text, max_tokens=1500):
-    # Split the text into sentences using NLTK
     sentences = nltk.sent_tokenize(text)
 
-    # Split the sentences into chunks of at most max_tokens
     chunks = []
     current_chunk = []
     current_length = 0
@@ -44,7 +40,6 @@ def split_prompt(text, max_tokens=1500):
     if current_chunk:
         chunks.append(current_chunk)
 
-    # Join each chunk back into a string
     prompts = []
     for chunk in chunks:
         prompt = ' '.join(chunk)
@@ -54,30 +49,23 @@ def split_prompt(text, max_tokens=1500):
 
 
 def extract_paragraphs(text):
-    # Split the text into paragraphs
     paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
 
-    # Join the paragraphs into a single string
     return ' '.join(paragraphs)
 
 @app.route('/convert', methods=['POST'])
 def process_pdf():
-    # Get the uploaded file from the request
     file = request.files['pdf']
 
-    # Get the city and country parameters from the request
     city = request.form['city']
     country = request.form['country']
     current_page = int(request.form['current_page'])
 
-    # Read the PDF file and extract the text
     pdf_reader = PyPDF2.PdfReader(file)
     page_text = ' '.join(pdf_reader.pages[current_page - 1].extract_text().split())
     
-    # Extract paragraphs from the text
     paragraphs = extract_paragraphs(page_text)
 
-    # Make a request to the ChatGPT API
     openai.api_key = os.getenv("OPENAI_API_KEY")
     prompts = split_prompt(paragraphs)
     final_response = ""
@@ -104,7 +92,6 @@ def process_pdf():
                 'message': str(e),
             }
 
-    # Return the message in a JSON response
     if len(final_response) > 0:
         return {
             'success': True,
