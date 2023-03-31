@@ -1,4 +1,4 @@
-# PDF Converter with OpenAI GPT-3 Integration
+# PDF Converter with OpenAI GPT-3.5 Integration
 
 This is a web application built with Python and Flask that allows users to upload a PDF file and receive a simplified, humorous explanation of the contents using OpenAI's GPT-3 API. The application uses NLTK to split the PDF text into smaller chunks to stay within the API's maximum token limit, and PyPDF2 to extract the text from the PDF file.
 
